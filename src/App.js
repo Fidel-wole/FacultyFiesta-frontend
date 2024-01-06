@@ -20,7 +20,7 @@ import { useHotkeys, useLocalStorage } from "@mantine/hooks";
 export default function App() {
   const [celebrants, setCelebrants] = useState([]);
   const [opened, setOpened] = useState(false);
-  const [name, setCelebrant] = useState("");
+  const [celebrant, setCelebrant] = useState("");
   const [birthdayDate, setBirthdayDate] = useState("");
   const [colorScheme, setColorScheme] = useLocalStorage({
     key: "mantine-color-scheme",
@@ -43,7 +43,7 @@ export default function App() {
     e.preventDefault();
 
     const celebrantData = {
-      name: name,
+      name: celebrant,
       birthdayDate: birthdayDate,
     };
 
@@ -82,48 +82,54 @@ export default function App() {
         withNormalizeCSS
       >
         <div className="App">
-          <Modal
-            opened={opened}
-            size={"md"}
-            title={"New Celebrant"}
-            withCloseButton={false}
-            onClose={() => {
-              setOpened(false);
-            }}
-            centered
-          >
-            <form onSubmit={handleAddCelebrant}>
-              <TextInput
-                mt={"md"}
-                value={setCelebrant}
-                placeholder={"Celebrant's name"}
-                required
-                onChange={handleNameChange}
-                label={"Name"}
-              />
-              <label>Date</label><br/>
-              <input
-                type="date"
-                value={setBirthdayDate}
-                mt={"md"}
-                placeholder={"Task Summary"}
-                required
-                onChange={handleDateChange}
-                label={"Summary"}
-              />
-              <Group mt={"md"} position={"apart"}>
-                <Button
-                  onClick={() => {
-                    setOpened(false);
-                  }}
-                  variant={"subtle"}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit">Add Celebrant</Button>
-              </Group>
-            </form>
-          </Modal>
+         
+        <Modal
+  opened={opened}
+  size={"md"}
+  title={"New Celebrant"}
+  withCloseButton={false}
+  onClose={() => {
+    setOpened(false);
+  }}
+  centered
+>
+  <TextInput
+    mt={"md"}
+    value={celebrant} // Use celebrant instead of setCelebrant
+    placeholder={"Celebrant's name"}
+    required
+    onChange={(e) => handleNameChange(e)} // Update the state correctly
+    label={"Name"}
+  />
+  <label>Date</label>
+  <br />
+  <input
+    type="date"
+    value={birthdayDate} // Use birthdayDate instead of setBirthdayDate
+    mt={"md"}
+    placeholder={"Task Summary"}
+    required
+    onChange={(e) => handleDateChange(e)} // Update the state correctly
+    label={"Summary"}
+  />
+  <Group mt={"md"} position={"apart"}>
+    <Button
+      onClick={() => {
+        setOpened(false);
+      }}
+      variant={"subtle"}
+    >
+      Cancel
+    </Button>
+    <Button
+      onClick={(e) => handleAddCelebrant(e)}
+    >
+      Add Celebrant
+    </Button>
+  </Group>
+</Modal>
+
+        
           <Container size={550} my={40}>
             <Group position={"apart"}>
               <Title

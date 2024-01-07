@@ -31,7 +31,7 @@ export default function App() {
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
   useHotkeys([["mod+J", () => toggleColorScheme()]]);
-
+const currentMonth = new Date().toLocaleString('default', { month: 'long' });
   const handleNameChange = (e) => {
     setCelebrant(e.target.value);
   };
@@ -54,6 +54,8 @@ export default function App() {
         console.log(response.data);
         // Update celebrants state with the new celebrant data if needed
         setCelebrants([...celebrants, response.data]);
+        
+      
       } else {
         console.error("Failed to add celebrant");
       }
@@ -65,12 +67,26 @@ export default function App() {
   useEffect(() => {
     Axios.get("http://localhost:8000/getCelebrants")
       .then((response) => {
-        setCelebrants(response.data);
+        const sortedCelebrants = response.data.sort((a, b) => {
+          const dayA = new Date(a.birthdayDate).getDate();
+          const dayB = new Date(b.birthdayDate).getDate();
+          return dayA - dayB;
+        });
+
+        setCelebrants(sortedCelebrants);
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
+
+  const isBirthdayToday = (birthday) => {
+    const today = new Date();
+    const birthdayDate = new Date(birthday);
+    return today.getDate() === birthdayDate.getDate() && today.getMonth() === birthdayDate.getMonth();
+  };
+
+
   return (
    <ColorSchemeProvider
    colorScheme ={colorScheme}
@@ -122,7 +138,7 @@ export default function App() {
       Cancel
     </Button>
     <Button
-      onClick={(e) => handleAddCelebrant(e)}
+      onClick={(e) =>{ handleAddCelebrant(e); setOpened(false)}}
     >
       Add Celebrant
     </Button>
@@ -138,7 +154,7 @@ export default function App() {
                   fontWeight: 900,
                 })}
               >
-                Birthdays
+               {currentMonth} Birthdays
               </Title>
               <ActionIcon
                 color={"blue"}
@@ -160,11 +176,15 @@ export default function App() {
           <Group position={"apart"}>
             <Text weight={"bold"}>{celebrant.name}</Text>
           </Group>
-          <Text color={"dimmed"} size={"md"} mt={"sm"}>
-            {celebrant.formattedBirthdayDate
-              ? celebrant.formattedBirthdayDate
-              : "Date not provided"}
-          </Text>
+         {isBirthdayToday(celebrant.birthdayDate) && celebrant.formattedBirthdayDate ? (
+  <Text color={"dimmed"} size={"md"} mt={"sm"}>
+    Today is this student's birthday! Wish him/her a Happy Birthday! - {celebrant.formattedBirthdayDate}
+  </Text>
+) : (
+  <Text color={"dimmed"} size={"md"} mt={"sm"}>
+    {celebrant.formattedBirthdayDate || "Date not provided"}
+  </Text>
+)}
         </Card>
       );
     } else {

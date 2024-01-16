@@ -49,7 +49,7 @@ export default function App() {
 
     try {
       const response = await Axios.post(
-        "http://localhost:8000/postCelebrant",
+        "https://birthday-backend-uvtd.onrender.com/postCelebrant",
         celebrantData
       );
 
@@ -66,7 +66,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    Axios.get("http://localhost:8000/getCelebrants")
+    Axios.get("https://birthday-backend-uvtd.onrender.com/getCelebrants")
       .then((response) => {
         const sortedCelebrants = response.data.sort((a, b) => {
           const dayA = new Date(a.birthdayDate).getDate();
